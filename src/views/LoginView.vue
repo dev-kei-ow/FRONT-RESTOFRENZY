@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { mdiAccount, mdiAsterisk } from "@mdi/js";
 import SectionFullScreen from "@/components/SectionFullScreen.vue";
@@ -10,17 +10,47 @@ import FormControl from "@/components/FormControl.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import LayoutGuest from "@/layouts/LayoutGuest.vue";
-
-const form = reactive({
-  login: "john.doe",
-  pass: "highly-secure-password-fYjUw-",
-  remember: true,
-});
+import { useMainStore } from "@/stores/main";
 
 const router = useRouter();
+const mainStore = useMainStore();
 
-const submit = () => {
-  router.push("/dashboard");
+const username = ref("");
+const password = ref("");
+const error = ref(null);
+
+const login = async () => {
+  try {
+    const successfulLogin = await mainStore.login(
+      username.value,
+      password.value
+    );
+    if (successfulLogin) {
+      mainStore.setUser({ name: username.value }); // Establecer el nombre en la tienda
+      // Redireccionar a la página después de un inicio de sesión exitoso
+    } else {
+      error.value = "Credenciales inválidas"; // Manejar error de inicio de sesión
+    }
+  } catch (err) {
+    console.error("Error en el inicio de sesión:", err);
+    error.value = "Error en el inicio de sesión";
+  }
+};
+
+const submit = async () => {
+  try {
+    const success = await mainStore.login(username.value, password.value);
+
+    if (success) {
+      mainStore.setUser({ name: username.value }); // Establecer el nombre en la tienda
+      router.push("/dashboard"); // Redireccionar a la página después de un inicio de sesión exitoso
+    } else {
+      error.value = "Credenciales inválidas"; // Manejar error de inicio de sesión
+    }
+  } catch (error) {
+    console.error("Error en el inicio de sesión:", err);
+    error.value = "Error en el inicio de sesión";
+  }
 };
 </script>
 
@@ -30,7 +60,7 @@ const submit = () => {
       <CardBox :class="cardClass" is-form @submit.prevent="submit">
         <FormField label="Login" help="Please enter your login">
           <FormControl
-            v-model="form.login"
+            v-model="username"
             :icon="mdiAccount"
             name="login"
             autocomplete="username"
@@ -39,7 +69,7 @@ const submit = () => {
 
         <FormField label="Password" help="Please enter your password">
           <FormControl
-            v-model="form.pass"
+            v-model="password"
             :icon="mdiAsterisk"
             type="password"
             name="password"
@@ -47,12 +77,7 @@ const submit = () => {
           />
         </FormField>
 
-        <FormCheckRadio
-          v-model="form.remember"
-          name="remember"
-          label="Remember"
-          :input-value="true"
-        />
+        <FormCheckRadio name="remember" label="Remember" :input-value="true" />
 
         <template #footer>
           <BaseButtons>

@@ -23,7 +23,7 @@ import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
           href="https://github.com/justboil/admin-one-vue-tailwind"
           target="_blank"
           :icon="mdiGithub"
-          label="Star on GitHub"
+          label="Agregar"
           color="contrast"
           rounded-full
           small
