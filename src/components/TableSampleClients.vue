@@ -8,24 +8,20 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import UserAvatar from "@/components/UserAvatar.vue";
+import { onMounted } from 'vue';
 
 defineProps({
   checkable: Boolean,
 });
 
 const mainStore = useMainStore();
-
 const items = computed(() => mainStore.clients);
-
 const isModalActive = ref(false);
-
 const isModalDangerActive = ref(false);
-
 const perPage = ref(5);
-
 const currentPage = ref(0);
-
 const checkedRows = ref([]);
+const getListadoEmpleados = mainStore.getListadoEmpleados;
 
 const itemsPaginated = computed(() =>
   items.value.slice(
@@ -35,9 +31,7 @@ const itemsPaginated = computed(() =>
 );
 
 const numPages = computed(() => Math.ceil(items.value.length / perPage.value));
-
 const currentPageHuman = computed(() => currentPage.value + 1);
-
 const pagesList = computed(() => {
   const pagesList = [];
 
@@ -59,14 +53,23 @@ const remove = (arr, cb) => {
 
   return newArr;
 };
-
-const checked = (isChecked, client) => {
+// Llama a la función para cargar empleados al montar el componente
+onMounted(async () => {
+  try {
+    const empleados = await getListadoEmpleados();
+    // Actualiza la lista de empleados en tu store o en el componente
+    mainStore.setListadoEmpleados(empleados); // Cambia esto según cómo manejes los datos en tu app
+  } catch (error) {
+    console.error("Error al cargar la lista de empleados", error);
+  }
+});
+const checked = (isChecked, empleado) => {
   if (isChecked) {
-    checkedRows.value.push(client);
+    checkedRows.value.push(empleado);
   } else {
     checkedRows.value = remove(
       checkedRows.value,
-      (row) => row.id === client.id
+      (row) => row.id === empleado.id
     );
   }
 };
@@ -103,8 +106,8 @@ const checked = (isChecked, client) => {
       <tr>
         <th v-if="checkable" />
         <th />
-        <th>Name</th>
-        <th>Company</th>
+        <th>Nombre</th>
+        <th>Apellido  </th>
         <th>City</th>
         <th>Progress</th>
         <th>Created</th>
@@ -112,40 +115,38 @@ const checked = (isChecked, client) => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="client in itemsPaginated" :key="client.id">
+      <tr v-for="empleado  in itemsPaginated" :key="empleado.id">
         <TableCheckboxCell
           v-if="checkable"
-          @checked="checked($event, client)"
+          @checked="checked($event, empleado)"
         />
         <td class="border-b-0 lg:w-6 before:hidden">
           <UserAvatar
-            :username="client.name"
+            :username="empleado.name"
             class="w-24 h-24 mx-auto lg:w-6 lg:h-6"
           />
         </td>
-        <td data-label="Name">
-          {{ client.name }}
-        </td>
+        <td data-label="Name">{{ empleado.nombre }}</td>
         <td data-label="Company">
-          {{ client.company }}
+          {{ empleado.company }}
         </td>
         <td data-label="City">
-          {{ client.city }}
+          {{ empleado.city }}
         </td>
         <td data-label="Progress" class="lg:w-32">
           <progress
             class="flex w-2/5 self-center lg:w-full"
             max="100"
-            :value="client.progress"
+            :value="empleado.progress"
           >
-            {{ client.progress }}
+            {{ empleado.progress }}
           </progress>
         </td>
         <td data-label="Created" class="lg:w-1 whitespace-nowrap">
           <small
             class="text-gray-500 dark:text-slate-400"
-            :title="client.created"
-            >{{ client.created }}</small
+            :title="empleado.created"
+            >{{ empleado.created }}</small
           >
         </td>
         <td class="before:hidden lg:w-1 whitespace-nowrap">

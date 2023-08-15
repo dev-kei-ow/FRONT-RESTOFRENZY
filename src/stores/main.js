@@ -6,7 +6,6 @@ export const useMainStore = defineStore("main", {
     /* User */
     userName: null,
     password: null,
-
     userEmail: null,
     userAvatar: null,
 
@@ -14,7 +13,7 @@ export const useMainStore = defineStore("main", {
     isFieldFocusRegistered: false,
 
     /* Sample data (commonly used) */
-    clients: [],
+    getListadoEmpleados: [],
     history: [],
   }),
   actions: {
@@ -30,6 +29,23 @@ export const useMainStore = defineStore("main", {
       }
     },
 
+    async getListadoEmpleados() {
+      try {
+        const res = await axios.get("http://localhost:3000/api/empleado/listar");
+        if (res.status === 200) {
+          return res.data.data; // Retorna los datos de los empleados
+        } else {
+          console.error("Error al obtener la lista de empleados");
+          return [];
+        }
+      } catch (err) {
+        console.error("Error en la solicitud para listar empleados", err);
+        return [];
+      }
+    },
+    
+
+
     async login(username, password) {
       try {
         const res = await axios.post(
@@ -42,13 +58,13 @@ export const useMainStore = defineStore("main", {
 
         if (res.data.accessToken) {
           console.log("Access Token:", res.data.accessToken); // Muestra el token en la consola
-          return true;
+          return { success: true, idAdmin: res.data.idAdmin }; // Retorna el idAdmin
         } else {
-          return false;
+          return { success: false, idAdmin: null };
         }
       } catch (err) {
         console.error("Error en la solicitud de inicio de sesión", err);
-        return false;
+        return { success: false, idAdmin: null };
       }
     },
 

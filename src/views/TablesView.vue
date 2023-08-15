@@ -23,12 +23,13 @@ import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
           href="https://github.com/justboil/admin-one-vue-tailwind"
           target="_blank"
           :icon="mdiGithub"
-          label="Agregar"
+          label="Agregar Empleado"
           color="contrast"
           rounded-full
           small
         />
       </SectionTitleLineWithButton>
+
       <NotificationBar color="info" :icon="mdiMonitorCellphone">
         <b>Responsive table.</b> Collapses on mobile
       </NotificationBar>
