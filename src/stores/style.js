@@ -16,7 +16,6 @@ export const useStyleStore = defineStore("style", {
     navBarItemLabelActiveColorStyle: "",
     overlayStyle: "",
 
-    /* Dark mode */
     darkMode: false,
   }),
   actions: {
