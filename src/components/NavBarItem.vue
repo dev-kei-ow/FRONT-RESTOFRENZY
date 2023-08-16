@@ -33,6 +33,7 @@ const is = computed(() => {
 const styleStore = useStyleStore();
 
 const componentClass = computed(() => {
+  
   const base = [
     isDropdownActive.value
       ? `${styleStore.navBarItemLabelActiveColorStyle} dark:text-slate-400`

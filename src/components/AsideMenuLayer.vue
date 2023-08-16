@@ -6,6 +6,7 @@ import AsideMenuList from "@/components/AsideMenuList.vue";
 import AsideMenuItem from "@/components/AsideMenuItem.vue";
 import BaseIcon from "@/components/BaseIcon.vue";
 
+//** define el prop (menu) que esta en el AsideMenu.vue
 defineProps({
   menu: {
     type: Array,
@@ -66,7 +67,9 @@ const asideLgCloseClick = (event) => {
         "
         class="flex-1 overflow-y-auto overflow-x-hidden"
       >
+
         <AsideMenuList :menu="menu" @menu-click="menuClick" />
+
       </div>
 
       <ul>

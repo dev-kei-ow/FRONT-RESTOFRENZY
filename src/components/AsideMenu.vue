@@ -2,6 +2,7 @@
 import AsideMenuLayer from "@/components/AsideMenuLayer.vue";
 import OverlayLayer from "@/components/OverlayLayer.vue";
 
+//** define el prop menu que esta en el LayoutAuthenticated.vue
 defineProps({
   menu: {
     type: Array,

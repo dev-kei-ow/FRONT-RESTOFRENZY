@@ -6,7 +6,9 @@ import { mdiMinus, mdiPlus } from "@mdi/js";
 import { getButtonColor } from "@/colors.js";
 import BaseIcon from "@/components/BaseIcon.vue";
 import AsideMenuList from "@/components/AsideMenuList.vue";
+import { useMainStore } from "@/stores/main.js";
 
+//** define el prop (item) que esta en el AsideMenuLayer.vue
 const props = defineProps({
   item: {
     type: Object,
@@ -18,6 +20,9 @@ const props = defineProps({
 const emit = defineEmits(["menu-click"]);
 
 const styleStore = useStyleStore();
+
+//** Obtener la propiedad isAdmin del usuario logueado desde la tienda
+const isAdmin = useMainStore().isAdmin;
 
 const hasColor = computed(() => props.item && props.item.color);
 
@@ -46,7 +51,7 @@ const menuClick = (event) => {
 </script>
 
 <template>
-  <li>
+  <li v-if="isAdmin || (!isAdmin && props.item.idAdmin === 1)">
     <component
       :is="item.to ? RouterLink : 'a'"
       v-slot="vSlot"
@@ -71,8 +76,9 @@ const menuClick = (event) => {
           { 'pr-12': !hasDropdown },
           vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '',
         ]"
-        >{{ item.label }}</span
       >
+        {{ item.label }}
+      </span>
       <BaseIcon
         v-if="hasDropdown"
         :path="isDropdownActive ? mdiMinus : mdiPlus"

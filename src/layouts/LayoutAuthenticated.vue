@@ -13,6 +13,7 @@ import NavBarItemPlain from "@/components/NavBarItemPlain.vue";
 import AsideMenu from "@/components/AsideMenu.vue";
 import FooterBar from "@/components/FooterBar.vue";
 
+//** el esqueleto del dashboard -> NavBar, AsideMenu, FooterBar
 useMainStore().setUser({
   name: "",
   email: "nel@example.com",

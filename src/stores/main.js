@@ -6,6 +6,8 @@ export const useMainStore = defineStore("main", {
     /* User */
     userName: null,
     password: null,
+    isAdmin: false, // Agregar prop para rastrear si el usuario es administrador (2==true)
+
     userEmail: null,
     userAvatar: null,
 
@@ -29,9 +31,11 @@ export const useMainStore = defineStore("main", {
       }
     },
 
-    async getListadoEmpleados() {
+    async setListadoEmpleados() {
       try {
-        const res = await axios.get("http://localhost:3000/api/empleado/listar");
+        const res = await axios.get(
+          "http://localhost:3000/api/empleado/listar"
+        );
         if (res.status === 200) {
           return res.data.data; // Retorna los datos de los empleados
         } else {
@@ -43,8 +47,6 @@ export const useMainStore = defineStore("main", {
         return [];
       }
     },
-    
-
 
     async login(username, password) {
       try {
@@ -58,6 +60,9 @@ export const useMainStore = defineStore("main", {
 
         if (res.data.accessToken) {
           console.log("Access Token:", res.data.accessToken); // Muestra el token en la consola
+
+          this.isAdmin = res.data.idAdmin === 2; // Actualizar el valor isAdmin según el idAdmin recibido
+
           return { success: true, idAdmin: res.data.idAdmin }; // Retorna el idAdmin
         } else {
           return { success: false, idAdmin: null };

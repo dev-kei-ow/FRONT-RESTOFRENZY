@@ -1,6 +1,7 @@
 <script setup>
 import AsideMenuItem from "@/components/AsideMenuItem.vue";
 
+//** define el prop (menu) que esta en el AsideMenuLayer.vue
 defineProps({
   isDropdownList: Boolean,
   menu: {
