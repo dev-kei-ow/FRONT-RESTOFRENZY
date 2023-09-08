@@ -39,11 +39,20 @@ const login = async () => {
 
 const submit = async () => {
   try {
-    const success = await mainStore.login(username.value, password.value);
+    const response = await mainStore.login(username.value, password.value);
 
-    if (success) {
+    if (response.success) {
       mainStore.setUser({ name: username.value }); // Establecer el nombre en la tienda
-      router.push("/dashboard"); // Redireccionar a la página después de un inicio de sesión exitoso
+
+      // Redireccionar al usuario a una vista específica dependiendo del valor de idAdmin
+      if (response.idAdmin === 1) {
+        router.push("/profile");
+      } else if (response.idAdmin === 2) {
+        router.push("/dashboard");
+      } else {
+        // Redireccionar a una ruta por defecto si idAdmin no es 1 ni 2
+        router.push("/ruta-por-defecto");
+      }
     } else {
       error.value = "Credenciales inválidas"; // Manejar error de inicio de sesión
     }
@@ -52,13 +61,14 @@ const submit = async () => {
     error.value = "Error en el inicio de sesión";
   }
 };
+
 </script>
 
 <template>
   <LayoutGuest>
     <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
       <CardBox :class="cardClass" is-form @submit.prevent="submit">
-        <FormField label="Login" help="Please enter your login">
+        <FormField label="Usuario:" help="Ingrese su usuario">
           <FormControl
             v-model="username"
             :icon="mdiAccount"
@@ -67,7 +77,7 @@ const submit = async () => {
           />
         </FormField>
 
-        <FormField label="Password" help="Please enter your password">
+        <FormField label="Contraseña:" help="Ingrese su contraseña">
           <FormControl
             v-model="password"
             :icon="mdiAsterisk"
@@ -77,11 +87,11 @@ const submit = async () => {
           />
         </FormField>
 
-        <FormCheckRadio name="remember" label="Remember" :input-value="true" />
+        <FormCheckRadio name="remember" label="Recuerdame" :input-value="true" />
 
         <template #footer>
           <BaseButtons>
-            <BaseButton type="submit" color="info" label="Login" />
+            <BaseButton type="submit" color="info" label="Ingresar" />
             <BaseButton to="/dashboard" color="info" outline label="Back" />
           </BaseButtons>
         </template>

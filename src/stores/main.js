@@ -7,16 +7,13 @@ export const useMainStore = defineStore("main", {
     userName: null,
     password: null,
     isAdmin: false, // Agregar prop para rastrear si el usuario es administrador (2==true)
-
     userEmail: null,
     userAvatar: null,
-
-    /* Field focus with ctrl+k (to register only once) */
     isFieldFocusRegistered: false,
-
-    /* Sample data (commonly used) */
-    getListadoEmpleados: [],
+    ListadoEmpleados: [],
     history: [],
+    isAuthenticated: false,
+    accessToken: null,
   }),
   actions: {
     setUser(payload) {
@@ -30,6 +27,25 @@ export const useMainStore = defineStore("main", {
         this.userAvatar = payload.avatar;
       }
     },
+    setAuthState(isAuthenticated) {
+      this.isAuthenticated = isAuthenticated;
+    },
+
+    setAccessToken(token) {
+      this.accessToken = token;
+      axios.defaults.headers.common["Authorization"] = token
+        ? `Bearer ${token}`
+        : null;
+    },
+    
+    initFromLocalStorage() {
+      const storedAccessToken = localStorage.getItem("access_token");
+      if (storedAccessToken) {
+        // Configura el token almacenado en Vuex y en las cabeceras de axios
+        this.setAccessToken(storedAccessToken);
+        this.setAuthState(true);
+      }
+    },
 
     async setListadoEmpleados() {
       try {
@@ -37,16 +53,17 @@ export const useMainStore = defineStore("main", {
           "http://localhost:3000/api/empleado/listar"
         );
         if (res.status === 200) {
-          return res.data.data; // Retorna los datos de los empleados
+          this.ListadoEmpleados = res.data; // Actualiza la lista de empleados en el store
         } else {
           console.error("Error al obtener la lista de empleados");
-          return [];
+          this.ListadoEmpleados = []; // Limpia la lista de empleados en caso de error
         }
       } catch (err) {
         console.error("Error en la solicitud para listar empleados", err);
-        return [];
+        this.ListadoEmpleados = []; // Limpia la lista de empleados en caso de error
       }
     },
+    
 
     async login(username, password) {
       try {
@@ -60,7 +77,7 @@ export const useMainStore = defineStore("main", {
 
         if (res.data.accessToken) {
           console.log("Access Token:", res.data.accessToken); // Muestra el token en la consola
-
+          localStorage.setItem("access_token", res.data.accessToken);
           this.isAdmin = res.data.idAdmin === 2; // Actualizar el valor isAdmin según el idAdmin recibido
 
           return { success: true, idAdmin: res.data.idAdmin }; // Retorna el idAdmin
@@ -86,4 +103,5 @@ export const useMainStore = defineStore("main", {
         });
     },
   },
+  
 });

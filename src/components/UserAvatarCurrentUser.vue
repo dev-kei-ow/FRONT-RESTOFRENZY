@@ -10,3 +10,4 @@ const mainStore = useMainStore();
     <slot />
   </UserAvatar>
 </template>
+  

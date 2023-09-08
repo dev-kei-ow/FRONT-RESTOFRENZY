@@ -9,6 +9,8 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import UserAvatar from "@/components/UserAvatar.vue";
 import { onMounted } from 'vue';
+import axios from "axios";
+
 
 defineProps({
   checkable: Boolean,
@@ -21,7 +23,6 @@ const isModalDangerActive = ref(false);
 const perPage = ref(5);
 const currentPage = ref(0);
 const checkedRows = ref([]);
-const getListadoEmpleados = mainStore.getListadoEmpleados;
 
 const itemsPaginated = computed(() =>
   items.value.slice(
@@ -56,13 +57,14 @@ const remove = (arr, cb) => {
 // Llama a la función para cargar empleados al montar el componente
 onMounted(async () => {
   try {
-    const empleados = await getListadoEmpleados();
+    const empleados = await mainStore.setListadoEmpleados();
     // Actualiza la lista de empleados en tu store o en el componente
-    mainStore.setListadoEmpleados(empleados); // Cambia esto según cómo manejes los datos en tu app
+    mainStore.setListadoEmpleados(empleados);
   } catch (error) {
     console.error("Error al cargar la lista de empleados", error);
   }
 });
+
 const checked = (isChecked, empleado) => {
   if (isChecked) {
     checkedRows.value.push(empleado);
@@ -74,7 +76,7 @@ const checked = (isChecked, empleado) => {
   }
 };
 </script>
-
+<!--  -->
 <template>
   <CardBoxModal v-model="isModalActive" title="Sample modal">
     <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
@@ -107,10 +109,17 @@ const checked = (isChecked, empleado) => {
         <th v-if="checkable" />
         <th />
         <th>Nombre</th>
-        <th>Apellido  </th>
-        <th>City</th>
-        <th>Progress</th>
-        <th>Created</th>
+        <th>Apellido</th>
+        <th>Salario</th>
+        <th>Nacimiento</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Usuario</th>
+        <th>Contraseña</th>
+        <th>idSucursal</th>
+        <th>idCargo</th>
+        <th>idTipoEmpleado</th>
         <th />
       </tr>
     </thead>
@@ -126,10 +135,9 @@ const checked = (isChecked, empleado) => {
             class="w-24 h-24 mx-auto lg:w-6 lg:h-6"
           />
         </td>
-        <td data-label="Name">{{ empleado.nombre }}</td>
-        <td data-label="Company">
-          {{ empleado.company }}
-        </td>
+        <td data-label="Nombre">{{ empleado.nombres }}</td>
+
+        <td data-label="Company">{{ empleado.company }}</td>
         <td data-label="City">
           {{ empleado.city }}
         </td>
